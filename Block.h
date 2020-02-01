@@ -12,7 +12,7 @@ public:
     std::string getHash();
     void mineBlock(uint32_t difficulty);
     std::string calculateHash() const;
-    void print();
+    friend std::ostream &operator<<(std::ostream &stream, Block block);
 private:
     uint32_t index;
     int64_t nonce;

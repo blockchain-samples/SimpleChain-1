@@ -34,11 +34,11 @@ int Blockchain::isChainValid() {
   return 1;
 }
 
-void Blockchain::print() {
-  std::cout << "[\n";
-  for(long i = 1; i < chain.size(); i++) {
-    Block currentBlock = chain[i];
-    currentBlock.print();
+std::ostream &operator<<(std::ostream &stream, Blockchain bChain) {
+  stream << "[\n";
+  for(long i = 1; i < bChain.chain.size(); i++) {
+    Block currentBlock = bChain.chain[i];
+    stream << currentBlock;
   }
-  std::cout << "]\n";
+  stream << "]\n";
 }

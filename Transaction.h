@@ -5,13 +5,15 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <string>
+#include <cstring>
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/bio.h>
 #include "sha256.h"
-#include "ECDSA.h"
 #include "TransactionInput.h"
 #include "TransactionOutput.h"
+#include "RSAHelper.h"
 
 class Transaction {
 public:
@@ -19,8 +21,8 @@ public:
   char* sender;
   char* recipient;
   float value;
-  ECDSA_SIG* signature;
-  EC_KEY* key;
+  unsigned char* signature;
+  unsigned int signatureLength;
   std::vector<TransactionInput> inputs;
   std::vector<TransactionOutput> outputs;
   Transaction(char* from, char* to, float val, std::vector<TransactionInput> in);

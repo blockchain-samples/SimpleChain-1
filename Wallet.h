@@ -10,8 +10,8 @@
 
 class Wallet {
 public:
-  char* publicKey;
   char* privateKey;
+  char* publicKey;
   Wallet();
 private:
   int generateKeyPair();

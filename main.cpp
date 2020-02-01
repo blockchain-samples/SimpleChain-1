@@ -13,7 +13,7 @@ int main() {
 
   Transaction transaction1 = Transaction(walletA.publicKey, walletB.publicKey, 5, v);
   transaction1.generateSignature(walletA.privateKey);
-  std::cout << "Is signature verified: ";
+  std::cout << "Signature Verification returned: ";
   std::cout << transaction1.verifySignature() << "\n";
 
   // std::cout << "Mining block 1...\n";
@@ -28,7 +28,7 @@ int main() {
   // simpleChain.addBlock(Block(3, "Block 3 Data"));
   // simpleChain.isChainValid();
   //
-  // simpleChain.print();
+  // std::cout << simpleChain;
 
   return 0;
 }

@@ -10,7 +10,7 @@ public:
     Blockchain();
     void addBlock(Block newBlock);
     int isChainValid();
-    void print();
+    friend std::ostream &operator<<(std::ostream &stream, Blockchain chain);
 private:
     uint32_t difficulty;
     std::vector<Block> chain;

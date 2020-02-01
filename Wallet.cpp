@@ -12,7 +12,7 @@ int Wallet::generateKeyPair() {
   char* pub_key;             // Public key
   char* err;                 // Buffer for any error messages
 
-  RSA *keypair = RSA_generate_key(1024, 3, NULL, NULL);
+  RSA *keypair = RSA_generate_key(4096, 3, NULL, NULL);
 
   // To get the C-string PEM form:
   BIO *pri = BIO_new(BIO_s_mem());
@@ -39,7 +39,6 @@ int Wallet::generateKeyPair() {
   // free memory
   BIO_free(pri);
   BIO_free(pub);
-  RSA_free(keypair);
 
   // printf("\n%s\n%s\n", pri_key, pub_key);
   // printf("done.\n");

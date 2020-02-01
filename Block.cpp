@@ -35,12 +35,12 @@ inline std::string Block::calculateHash() const {
   return sha256(ss.str());
 }
 
-void Block::print() {
-  std::cout << "  {\n";
-  std::cout << "    Hash: " << hash << "\n";
-  std::cout << "    Previous Hash: " << prevHash << "\n";
-  std::cout << "    Data: " << data << "\n";
-  std::cout << "    Time Stamp: " << _time << "\n";
-  std::cout << "    Nonce: " << nonce << "\n";
-  std::cout << "  }\n";
+std::ostream &operator<<(std::ostream &stream, Block block) {
+  stream << "  {\n";
+  stream << "    Hash: " << block.hash << "\n";
+  stream << "    Previous Hash: " << block.prevHash << "\n";
+  stream << "    Data: " << block.data << "\n";
+  stream << "    Time Stamp: " << block._time << "\n";
+  stream << "    Nonce: " << block.nonce << "\n";
+  stream << "  }\n";
 }
