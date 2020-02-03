@@ -14,6 +14,7 @@
 #include "TransactionInput.h"
 #include "TransactionOutput.h"
 #include "RSAHelper.h"
+#include "SimpleChain.h"
 
 class Transaction {
 public:
@@ -28,6 +29,9 @@ public:
   Transaction(char* from, char* to, float val, std::vector<TransactionInput> in);
   void generateSignature(char* privKey);
   int verifySignature();
+  int processTransaction();
+  float getInputsValue();
+  float getOutputsValue();
 private:
   int sequence = 0;
   std::string calculateHash();

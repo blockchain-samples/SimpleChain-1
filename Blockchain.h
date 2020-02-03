@@ -3,7 +3,13 @@
 
 #include <cstdint>
 #include <vector>
+#include <map>
+#include "Transaction.h"
+#include "TransactionInput.h"
+#include "TransactionOutput.h"
 #include "Block.h"
+
+class Block;
 
 class Blockchain {
 public:
@@ -14,7 +20,7 @@ public:
 private:
     uint32_t difficulty;
     std::vector<Block> chain;
-    Block getLastBlock() const;
+    Block getLastBlock();
 };
 
 #endif

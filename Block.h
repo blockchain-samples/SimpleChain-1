@@ -4,14 +4,22 @@
 #include <cstdint>
 #include <iostream>
 #include <sstream>
+#include "Transaction.h"
+#include "MerkleRoot.h"
+
+class Transaction;
 
 class Block {
 public:
+    std::string merkleRoot;
     std::string prevHash;
-    Block(uint32_t indexIn, const std::string &dataIn);
+    std::vector<Transaction> transactions;
+    Block();
+    Block(std::string previousHash);
     std::string getHash();
     void mineBlock(uint32_t difficulty);
     std::string calculateHash() const;
+    int addTransaction(Transaction transaction);
     friend std::ostream &operator<<(std::ostream &stream, Block block);
 private:
     uint32_t index;

@@ -1,11 +1,14 @@
 #include "Block.h"
 #include "sha256.h"
 
-Block::Block(uint32_t indexIn, const std::string &dataIn) {
-  index = indexIn;
-  data = dataIn;
-  nonce = -1;
+Block::Block() {
+
+}
+
+Block::Block(std::string previousHash) {
+  prevHash = previousHash;
   _time = time(nullptr);
+  hash = calculateHash();
 }
 
 std::string Block::getHash() {
@@ -13,6 +16,7 @@ std::string Block::getHash() {
 }
 
 void Block::mineBlock(uint32_t difficulty) {
+  merkleRoot = getMerkleRoot(transactions);
   char cstr[difficulty + 1];
   for(uint32_t i = 0; i < difficulty; i++) {
     cstr[i] = '0';
@@ -28,11 +32,27 @@ void Block::mineBlock(uint32_t difficulty) {
   std::cout << "Block mined: " << hash << "\n";
 }
 
-inline std::string Block::calculateHash() const {
+std::string Block::calculateHash() const {
   std::stringstream ss;
-  ss << index << time << data << nonce << prevHash;
+  ss << prevHash << time << nonce << merkleRoot;
 
   return sha256(ss.str());
+}
+
+int Block::addTransaction(Transaction transaction) {
+  if(transaction.transactionId.empty() && strlen(transaction.sender) == 0 && strlen(transaction.recipient)) {
+    std::cout << "Transaction is NULL\n";
+    return false;
+  }
+  if(!(prevHash.compare("0") == 0)) {
+    if(transaction.processTransaction() != 1) {
+      std::cout << "Transaction Failed!\n";
+      return false;
+    }
+  }
+  transactions.push_back(transaction);
+  std::cout << "Transaction Added to Block\n";
+  return 1;
 }
 
 std::ostream &operator<<(std::ostream &stream, Block block) {

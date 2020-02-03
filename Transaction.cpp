@@ -1,6 +1,7 @@
 #include "Transaction.h"
 #include <openssl/err.h>
 
+
 Transaction::Transaction(char* from, char* to, float val, std::vector<TransactionInput> in) {
   sender = from;
   recipient = to;
@@ -61,4 +62,56 @@ int Transaction::verifySignature() {
     ERR_print_errors_fp(errFile);
   }
   return status;
+}
+
+int Transaction::processTransaction() {
+  if(verifySignature() == 0) {
+    std::cout << "Transaction signature failed to verify!\n";
+    return 0;
+  }
+
+  for(int i = 0; i < inputs.size(); i++) {
+    auto it = SimpleChainUTXOs.find(inputs[i].transactionOutputId);
+    inputs[i].UTXO = it->second;
+  }
+
+  if(getInputsValue() < SimpleChainMinimumTransaction) {
+    std::cout << "Transaction Inputs too small: " << std::to_string(getInputsValue()) << "\n";
+    return 0;
+  }
+
+  float leftOver = getInputsValue() - value;
+  transactionId = calculateHash();
+  outputs.push_back(TransactionOutput(recipient, value, transactionId));
+  outputs.push_back(TransactionOutput(sender, leftOver, transactionId));
+
+  for(int i = 0; i < outputs.size(); i++) {
+      SimpleChainUTXOs.insert(std::pair<std::string, TransactionOutput> (outputs[i].id, outputs[i]));
+  }
+
+  for(int i = 0; i < inputs.size(); i++) {
+    if(inputs[i].UTXO.id.empty()) continue;
+    SimpleChainUTXOs.erase(inputs[i].UTXO.id);
+  }
+
+  return 1;
+}
+
+float Transaction::getInputsValue() {
+  float total = 0;
+  for(int i = 0; i < inputs.size(); i++) {
+    if(inputs[i].UTXO.id.empty() && inputs[i].transactionOutputId.empty()) continue;
+      total += inputs[i].UTXO.value;
+  }
+
+  return total;
+}
+
+float Transaction::getOutputsValue() {
+  float total = 0;
+  for(int i = 0; i < outputs.size(); i++) {
+    total += outputs[i].value;
+  }
+
+  return total;
 }

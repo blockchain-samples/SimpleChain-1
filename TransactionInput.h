@@ -7,10 +7,14 @@
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/bio.h>
+#include "TransactionOutput.h"
 
 class TransactionInput {
 public:
+  std::string transactionOutputId;
+  TransactionOutput UTXO;
   TransactionInput();
+  TransactionInput(std::string transactionOutId);
 private:
 };
 

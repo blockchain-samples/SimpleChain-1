@@ -43,3 +43,52 @@ int Wallet::generateKeyPair() {
   // printf("\n%s\n%s\n", pri_key, pub_key);
   // printf("done.\n");
 }
+
+float Wallet::getBalance() {
+  float total = 0;
+
+  for(std::map<std::string, TransactionOutput>::iterator it = SimpleChainUTXOs.begin(); it != SimpleChainUTXOs.end(); it++) {
+    TransactionOutput UTXO = it->second;
+    // Doesn't pass this check
+    if(UTXO.isMine(publicKey) == 1) {
+      UTXOs.insert(std::pair<std::string, TransactionOutput>(UTXO.id, UTXO));
+      total += UTXO.value;
+    }
+  }
+  return total;
+}
+
+Transaction Wallet::sendFunds(char* recip, float val) {
+  if(getBalance() < val) {
+    std::cout << "Not enough funds for transaction!\n";
+    std::vector<TransactionInput> v;
+    Transaction dummy = Transaction("0", "0", 0, v);
+    return dummy;
+  }
+
+  std::vector<TransactionInput> in;
+  float total = 0;
+
+  std::map<std::string, TransactionOutput>::iterator it;
+
+  for(it = UTXOs.begin(); it != UTXOs.end(); it++) {
+    TransactionOutput UTXO = it->second;
+    total += UTXO.value;
+    in.push_back(TransactionInput(UTXO.id));
+    if(total > val) break;
+  }
+
+  for(int i = 0; i < in.size(); i++) {
+    std::cout<< "sendFunds id: " << in[i].transactionOutputId << "\n";
+  }
+
+  Transaction newTransaction(publicKey, recip, val, in);
+
+  newTransaction.generateSignature(privateKey);
+
+  for(int i = 0; i < in.size(); i++) {
+    UTXOs.erase(in[i].transactionOutputId);
+  }
+
+  return newTransaction;
+}
