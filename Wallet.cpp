@@ -59,18 +59,22 @@ float Wallet::getBalance() {
 }
 
 Transaction Wallet::sendFunds(char* recip, float val) {
+  // if wallet balance is less than value
   if(getBalance() < val) {
+    // Return dummy transaction to be checked outside function call
     std::cout << "Not enough funds for transaction!\n";
     std::vector<TransactionInput> v;
     Transaction dummy = Transaction("0", "0", 0, v);
     return dummy;
   }
 
+  // Inputs and total
   std::vector<TransactionInput> in;
   float total = 0;
 
   std::map<std::string, TransactionOutput>::iterator it;
 
+  // Loop wallet UTXOs and add to total
   for(it = UTXOs.begin(); it != UTXOs.end(); it++) {
     TransactionOutput UTXO = it->second;
     total += UTXO.value;
@@ -82,10 +86,11 @@ Transaction Wallet::sendFunds(char* recip, float val) {
     std::cout<< "sendFunds id: " << in[i].transactionOutputId << "\n";
   }
 
+  // Create transaction
   Transaction newTransaction(publicKey, recip, val, in);
-
   newTransaction.generateSignature(privateKey);
 
+  // Erase used inputs from wallet UTXOs
   for(int i = 0; i < in.size(); i++) {
     UTXOs.erase(in[i].transactionOutputId);
   }

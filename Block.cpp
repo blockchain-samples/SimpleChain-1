@@ -40,10 +40,14 @@ std::string Block::calculateHash() const {
 }
 
 int Block::addTransaction(Transaction transaction) {
+  // Make sure transaction isn't NULL
   if(transaction.transactionId.empty() && strlen(transaction.sender) == 0 && strlen(transaction.recipient)) {
     std::cout << "Transaction is NULL\n";
     return false;
   }
+
+
+  // If genesis block, ignore
   if(!(prevHash.compare("0") == 0)) {
     if(transaction.processTransaction() != 1) {
       std::cout << "Transaction Failed!\n";

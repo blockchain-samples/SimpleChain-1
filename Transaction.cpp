@@ -65,30 +65,39 @@ int Transaction::verifySignature() {
 }
 
 int Transaction::processTransaction() {
+  // Verify signature
   if(verifySignature() == 0) {
     std::cout << "Transaction signature failed to verify!\n";
     return 0;
   }
 
+  // Get chain UTXOs
   for(int i = 0; i < inputs.size(); i++) {
     auto it = SimpleChainUTXOs.find(inputs[i].transactionOutputId);
     inputs[i].UTXO = it->second;
   }
 
+  // Make sure transaction value is above minimum
   if(getInputsValue() < SimpleChainMinimumTransaction) {
     std::cout << "Transaction Inputs too small: " << std::to_string(getInputsValue()) << "\n";
     return 0;
   }
 
+
+  // Calculate left over and add outputs
   float leftOver = getInputsValue() - value;
   transactionId = calculateHash();
+  // Output for transaction amount
   outputs.push_back(TransactionOutput(recipient, value, transactionId));
+  // Left over transaction back to sender
   outputs.push_back(TransactionOutput(sender, leftOver, transactionId));
 
+  // Add outputs to chain UTXOs
   for(int i = 0; i < outputs.size(); i++) {
       SimpleChainUTXOs.insert(std::pair<std::string, TransactionOutput> (outputs[i].id, outputs[i]));
   }
 
+  // Remove spent(input) chain UTXOs 
   for(int i = 0; i < inputs.size(); i++) {
     if(inputs[i].UTXO.id.empty()) continue;
     SimpleChainUTXOs.erase(inputs[i].UTXO.id);
