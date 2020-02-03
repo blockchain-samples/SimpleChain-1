@@ -41,7 +41,7 @@ std::string Block::calculateHash() const {
 
 int Block::addTransaction(Transaction transaction) {
   // Make sure transaction isn't NULL
-  if(transaction.transactionId.empty() && strlen(transaction.sender) == 0 && strlen(transaction.recipient)) {
+  if(transaction.transactionId.empty() && strlen(transaction.sender) == 0 && strlen(transaction.recipient) == 0) {
     std::cout << "Transaction is NULL\n";
     return false;
   }
@@ -66,5 +66,20 @@ std::ostream &operator<<(std::ostream &stream, Block block) {
   stream << "    Data: " << block.data << "\n";
   stream << "    Time Stamp: " << block._time << "\n";
   stream << "    Nonce: " << block.nonce << "\n";
+  stream << "    Transactions:\n";
+  for(int i = 0; i < block.transactions.size(); i++) {
+    stream << "        Value: " << std::to_string(block.transactions[i].value) << "\n";
+    stream << "        Transaction " + std::to_string(i) + " Inputs:\n";
+    for(int j = 0; j < block.transactions[i].inputs.size(); j++) {
+      stream << "            Input " + std::to_string(i) << ":\n";
+      stream << "                Input Transcation Output ID:" << block.transactions[i].inputs[j].transactionOutputId << "\n";
+      stream << "                Input Transaction Output UTXO ID: " << block.transactions[i].inputs[j].UTXO.id << "\n";
+    }
+    stream << "        Transaction " + std::to_string(i) + " Outputs:\n";
+    for(int j = 0; j < block.transactions[i].outputs.size(); j++) {
+      stream << "            Output " + std::to_string(j) + ":\n";
+      stream << "                Output Transaction ID: " << block.transactions[i].outputs[j].id << "\n";
+    }
+  }
   stream << "  }\n";
 }

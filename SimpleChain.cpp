@@ -32,7 +32,6 @@ int main() {
   genesis.addTransaction(genesisTransaction);
   // Add block to chain
   simpleChain.addBlock(genesis);
-  printChainUTXOS();
 
   // Transaction
   Block block1 = Block(genesis.getHash());
@@ -47,7 +46,6 @@ int main() {
   simpleChain.addBlock(block1);
   std::cout << "Wallet A's Balance is: " << walletA.getBalance() << "\n";
   std::cout << "Wallet B's Balance is: " << walletB.getBalance() << "\n";
-  printChainUTXOS();
 
   Block block2 = Block(block1.getHash());
   std::cout << "Wallet A is attempting to send more funds (1000) it has to wallet B...\n";
@@ -58,7 +56,6 @@ int main() {
   simpleChain.addBlock(block2);
   std::cout << "Wallet A's Balance is: " << walletA.getBalance() << "\n";
   std::cout << "Wallet B's Balance is: " << walletB.getBalance() << "\n";
-  printChainUTXOS();
 
   Block block3 = Block(block2.getHash());
   std::cout << "Wallet B is attempting to send funds (20) to wallet A...\n";
@@ -66,10 +63,10 @@ int main() {
   if(newTransaction.value != 0) {
     block3.addTransaction(newTransaction);
   }
-  simpleChain.addBlock(block1);
+  simpleChain.addBlock(block3);
   std::cout << "Wallet A's Balance is: " << walletA.getBalance() << "\n";
   std::cout << "Wallet B's Balance is: " << walletB.getBalance() << "\n";
-  printChainUTXOS();
+
   int valid = simpleChain.isChainValid();
   // do something if not valid
   if(valid == 1) {

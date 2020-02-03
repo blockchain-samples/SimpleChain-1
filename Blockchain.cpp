@@ -23,6 +23,8 @@ int Blockchain::isChainValid() {
   std::string hashTarget(cstr);
 
   Block currentBlock, previousBlock;
+
+  // Insert genesis transaction outputs UTXO
   std::map<std::string, TransactionOutput> tempUTXOs;
   tempUTXOs.insert(std::pair<std::string, TransactionOutput>(genesisTransaction.outputs[0].id, genesisTransaction.outputs[0]));
 
@@ -53,7 +55,6 @@ int Blockchain::isChainValid() {
     for(int t = 0; t < currentBlock.transactions.size(); t++) {
       Transaction currentTransaction = currentBlock.transactions[t];
 
-
       // Verify signature
       if(currentTransaction.verifySignature() != 1) {
         std::cout << "Signature on transaction " << std::to_string(t) << "is invalid\n";
@@ -68,12 +69,7 @@ int Blockchain::isChainValid() {
 
       // Loop through transaction inputs
       for(int j = 0; j < currentTransaction.inputs.size(); j++) {
-        for(std::map<std::string, TransactionOutput>::iterator it = tempUTXOs.begin(); it != tempUTXOs.end(); it++) {
-          std::cout << "id to match:" << it->first << "\n";
-        }
-        std::cout << "id being checked: " << currentTransaction.inputs[j].transactionOutputId << "\n";
         // Find UTXO is tempUTXOs that is referenced in the transaction
-        // Failing here, cannot find element in second check
         std::map<std::string, TransactionOutput>::iterator it = tempUTXOs.find(currentTransaction.inputs[j].transactionOutputId);
         if(it == tempUTXOs.end()) {
           std::cout << "Referenced input on transaction " << std::to_string(t) << " is missing\n";
@@ -81,11 +77,6 @@ int Blockchain::isChainValid() {
         }
 
         TransactionOutput tempOutput = it->second;
-        std::cout << "Checking if id is empty...\n";
-        if(tempOutput.id.empty()) {
-          std::cout << "Referenced input on transaction " << std::to_string(t) << " is missing\n";
-          return 0;
-        }
 
         // Check transaction inputs UTXO value is equal to chain UTXO value
         if(currentTransaction.inputs[j].UTXO.value != tempOutput.value) {

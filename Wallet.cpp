@@ -5,7 +5,6 @@ Wallet::Wallet() {
 }
 
 int Wallet::generateKeyPair() {
-  std::cout << "Generating Key Pair...\n";
   size_t pri_len;            // Length of private key
   size_t pub_len;            // Length of public key
   char* pri_key;             // Private key
@@ -80,10 +79,6 @@ Transaction Wallet::sendFunds(char* recip, float val) {
     total += UTXO.value;
     in.push_back(TransactionInput(UTXO.id));
     if(total > val) break;
-  }
-
-  for(int i = 0; i < in.size(); i++) {
-    std::cout<< "sendFunds id: " << in[i].transactionOutputId << "\n";
   }
 
   // Create transaction
